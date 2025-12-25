@@ -14,6 +14,12 @@ export default function SiteHeader() {
                 About
           </Link>
         </div>
+
+                <div>
+          <Link href="/articles" className="hover:opacity-70">
+                Articles
+          </Link>
+        </div>
         
         <div className="border-b border-zinc-50">
           <Link

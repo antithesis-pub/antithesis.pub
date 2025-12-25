@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Spectral, Jost, Ubuntu_Mono } from "next/font/google";
 import { siteConfig } from "@/lib/config/siteConfig";
+import SiteHeader from "@/components/layout/SiteHeader";
+import SiteFooter from "@/components/layout/SiteFooter";
 import "@/styles/globals.css";
 
 const siteName = siteConfig.name 
 const siteTag = siteConfig.tagline
 
 const spectralSerif = Spectral({
-  weight: '400', // or ['400', '700'] for multiple weights
+  weight: '400',
   variable: "--font-spectral-serif",
   subsets: ["latin"],
 });
@@ -18,7 +20,7 @@ const jostSans = Jost({
 });
 
 const ubuntuMono = Ubuntu_Mono({
-  weight: '400', // or ['400', '700'] for multiple weights
+  weight: '400',
   variable: "--font-ubuntu-mono",
   subsets: ["latin"],
 });
@@ -35,10 +37,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${jostSans.variable} ${ubuntuMono.variable} ${spectralSerif.variable} antialiased`}
-      >
-        {children}
+      <body className={`${jostSans.variable} ${ubuntuMono.variable} ${spectralSerif.variable} antialiased`}>
+        <SiteHeader />
+        
+        <div className="flex min-h-screen items-center justify-center font-serif bg-black">
+          <main className="min-h-screen w-full max-w-3xl flex flex-col pt-10 px-8 py-12 bg-black">
+            {children}
+          </main>
+        </div>
+        
+        <SiteFooter />
       </body>
     </html>
   );

@@ -1,11 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 
 export default function Home() {
   return (
     
       <main>
-       <PageShell>
+       
         <div className="font-mono text-white">
           
           Some more content for the home page
@@ -13,9 +14,11 @@ export default function Home() {
           <p className="font-sans">
             Some font in sans
           </p>
+
+          <Link href="/articles">Browse Articles</Link>
   
         </div>
-       </PageShell>  
+         
       </main>
     
   );

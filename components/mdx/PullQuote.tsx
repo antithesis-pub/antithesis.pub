@@ -6,7 +6,7 @@ type PullQuoteProps = {
 };
 
 export function PullQuote({ children, position = 'right' }: PullQuoteProps) {
-  const baseClasses = "my-6 p-6 border-l-4 border-gray-800 bg-gray-50";
+  const baseClasses = "my-6 p-6 border-l-4 border-gray-800 --color-background";
   
   const positionClasses = {
     left: "float-left w-1/2 mr-6",
