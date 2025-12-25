@@ -1,11 +1,8 @@
 'use client';
 
-// Switch to use custom named styling variables that can be declared
-// in the global.css file in the @themes section
+import { useState, FormEvent, ChangeEvent } from 'react';
 
-import { useState } from 'react';
-
-export default function ContactFormNetlify() {
+export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,7 +12,7 @@ export default function ContactFormNetlify() {
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -23,20 +20,21 @@ export default function ContactFormNetlify() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setStatus({ type: '', message: '' });
 
     try {
-      const formElement = e.target;
-      const formDataObj = new FormData(formElement);
-
-      const response = await fetch('/', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formDataObj).toString(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         setStatus({
@@ -47,7 +45,7 @@ export default function ContactFormNetlify() {
       } else {
         setStatus({
           type: 'error',
-          message: 'Something went wrong. Please try again.'
+          message: data.error || 'Something went wrong. Please try again.'
         });
       }
     } catch (error) {
@@ -63,23 +61,11 @@ export default function ContactFormNetlify() {
   return (
     <div className="max-w-2xl mx-auto p-6 font-sans text-white">
       <form 
-        name="contact"
-        method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
         onSubmit={handleSubmit}
         className="space-y-6"
       >
-        {/* Hidden fields for Netlify Forms */}
-        <input type="hidden" name="form-name" value="contact" />
-        <p className="hidden">
-          <label>
-            Don't fill this out if you're human: <input name="bot-field" />
-          </label>
-        </p>
-
         <div>
-          <label htmlFor="name" className="block text-sm font-medium  mb-2">
+          <label htmlFor="name" className="block text-sm font-medium mb-2">
             Name *
           </label>
           <input
@@ -89,13 +75,13 @@ export default function ContactFormNetlify() {
             required
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
             placeholder="Your name"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium  mb-2">
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
             Email *
           </label>
           <input
@@ -105,13 +91,13 @@ export default function ContactFormNetlify() {
             required
             value={formData.email}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
             placeholder="your.email@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="subject" className="block text-sm font-medium  mb-2">
+          <label htmlFor="subject" className="block text-sm font-medium mb-2">
             Subject *
           </label>
           <input
@@ -121,13 +107,13 @@ export default function ContactFormNetlify() {
             required
             value={formData.subject}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
             placeholder="How can we help?"
           />
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-medium  mb-2">
+          <label htmlFor="message" className="block text-sm font-medium mb-2">
             Message *
           </label>
           <textarea
@@ -136,8 +122,8 @@ export default function ContactFormNetlify() {
             required
             value={formData.message}
             onChange={handleChange}
-            rows="6"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-vertical"
+            rows={6}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-vertical text-gray-900"
             placeholder="Tell us more about your inquiry..."
           />
         </div>
