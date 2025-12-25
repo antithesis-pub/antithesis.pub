@@ -16,9 +16,9 @@ export function PullQuote({ children, position = 'right' }: PullQuoteProps) {
 
   return (
     <aside className={`${baseClasses} ${positionClasses[position]}`}>
-      <p className="text-2xl font-serif italic text-center leading-tight">
+      <div className="text-2xl font-serif italic text-center leading-tight">
         {children}
-      </p>
+      </div>
     </aside>
   );
 }

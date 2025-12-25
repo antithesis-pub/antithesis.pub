@@ -1,4 +1,3 @@
-import { PageShell } from "@/components/layout/PageShell";
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import * as MDXComponents from '@/components/mdx'; 
 import type { FeatureArticle } from '@/lib/types';
@@ -44,6 +43,8 @@ export function FeatureLayout({ feature }: { feature: FeatureArticle }) {
             components={MDXComponents}
           />
         </div>
+
+        <div className="max-w-prose mx-auto text-zinc-500 font-mono font-thin">{feature.author.bio}</div>
       </article>
     
   );

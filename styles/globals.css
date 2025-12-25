@@ -4,6 +4,10 @@
   --background: #000000;
   --foreground: #ffffff;
   
+  /* Brand Colors - Change these to update the entire site */
+  --color-primary: #3b82f6;      /* Blue - for main CTAs, links */
+  --color-secondary: #8b5cf6;    /* Purple - for accents, highlights */
+  --color-accent: #f59e0b;       /* Amber - for special elements */
 }
 
 @theme inline {
@@ -12,6 +16,11 @@
   --font-sans: var(--font-jost-sans);
   --font-serif: var(--font-spectral-serif);
   --font-mono: var(--font-ubuntu-mono);
+  
+  /* Make colors available as Tailwind utilities */
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,11 +29,6 @@
     --foreground: #ededed;
   }
 }
-
-/* main {
-  background-color: #000000;
-  background-image: url('/patterns/hero-pattern.svg');
-} */
 
 body {
   background-color: #000000;
@@ -36,5 +40,3 @@ body {
 p {
   padding-bottom: 1em;
 }
-
-

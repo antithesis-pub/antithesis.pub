@@ -15,7 +15,7 @@ export default function SiteHeader() {
           </Link>
         </div>
 
-                <div>
+        <div>
           <Link href="/articles" className="hover:opacity-70">
                 Articles
           </Link>
@@ -27,6 +27,14 @@ export default function SiteHeader() {
           > {siteConfig.name}
           </Link>
         </div>
+
+        <div>
+          <Link href="/support" className="hover:opacity-70">
+                Support
+          </Link>
+        </div>
+
+
         <div>
           <Link href="/contact" className="hover:opacity-70">
                 Contact

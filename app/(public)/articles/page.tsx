@@ -1,5 +1,4 @@
 import { getArticles } from "@/lib/strapi";
-import { PageShell } from "@/components/layout/PageShell";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -31,7 +30,7 @@ export default async function ArticlesPage() {
               )}
               
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition">
+                <h2 className="text-2xl font-bold mb-2 group-hover:text-accent transition">
                   {article.title}
                 </h2>
                 

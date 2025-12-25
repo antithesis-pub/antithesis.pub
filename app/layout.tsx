@@ -40,8 +40,9 @@ export default function RootLayout({
       <body className={`${jostSans.variable} ${ubuntuMono.variable} ${spectralSerif.variable} antialiased`}>
         <SiteHeader />
         
-        <div className="flex min-h-screen items-center justify-center font-serif bg-black">
-          <main className="min-h-screen w-full max-w-3xl flex flex-col pt-10 px-8 py-12 bg-black">
+        <div className="flex min-h-screen items-center justify-center">
+          {/* This main now has solid black background over the hero pattern */}
+          <main className="min-h-screen w-full max-w-3xl flex flex-col pt-10 px-8 py-12 bg-black font-serif">
             {children}
           </main>
         </div>

@@ -1,4 +1,3 @@
-import { PageShell } from "@/components/layout/PageShell";
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { Article } from '@/lib/types';
 import * as MDXComponents from '@/components/mdx'; 
@@ -20,6 +19,7 @@ export function ArticleLayout({ article }: { article: Article }) {
             components={MDXComponents}
           />
         </div>
+        <div className="max-w-prose mx-auto text-zinc-500 font-mono font-thin">{article.author.bio}</div>
       </article>
   );
 }
