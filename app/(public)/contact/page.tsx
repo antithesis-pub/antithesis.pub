@@ -1,4 +1,4 @@
-import ContactFormNetlify from '@/components/ContactFormNetlify';
+import ContactFormNetlify from '@/components/ContactForm';
 
 export default function ContactPage() {
   return (
