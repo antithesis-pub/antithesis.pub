@@ -19,7 +19,11 @@ export function ArticleLayout({ article }: { article: Article }) {
             components={MDXComponents}
           />
         </div>
-        <div className="max-w-prose mx-auto text-zinc-500 font-mono font-thin">{article.author.bio}</div>
+        {article.author?.bio && (
+        <div className="max-w-prose mx-auto text-zinc-500 font-mono font-thin">
+          {article.author.bio}
+        </div>
+      )}
       </article>
   );
 }
