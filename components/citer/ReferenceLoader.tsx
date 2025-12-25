@@ -3,7 +3,7 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { parseBibTeX } from '@/utils/bibtex-parser';
 import { parseCSLJSON } from '@/utils/csl-json-parser';
-import type { CitationData } from '@/components/CitationManager';
+import type { CitationData } from '@/components/citer/CitationManager';
 
 interface ReferenceLoaderProps {
   onLoad: (citations: CitationData[]) => void;
