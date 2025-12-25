@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PageShell } from "@/components/layout/PageShell";
+
 import { siteConfig } from "@/lib/config/siteConfig";
 
 export default function Home() {
