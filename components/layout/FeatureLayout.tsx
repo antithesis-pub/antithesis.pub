@@ -32,9 +32,11 @@ export function FeatureLayout({ feature }: { feature: FeatureArticle }) {
         </h2>
         
         {/* AUTHOR */}
+        {feature.author && (
         <p className="text-2xl text-center pb-4 font-mono">
           by {feature.author.name}
         </p>
+        )}
         
         {/* BODY */}
         <div className="prose prose-lg max-w-prose mx-auto">
@@ -43,8 +45,9 @@ export function FeatureLayout({ feature }: { feature: FeatureArticle }) {
             components={MDXComponents}
           />
         </div>
-
+        {feature.author?.bio && (
         <div className="max-w-prose mx-auto text-zinc-500 font-mono font-thin">{feature.author.bio}</div>
+        )}
       </article>
     
   );

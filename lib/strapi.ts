@@ -81,10 +81,10 @@ function transformArticle(data: any): Article {
     body: data.body,
     issueNumber: data.issueNumber,
     author: transformedAuthor,
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
-    publishedAt: new Date(data.publishedAt),
-    type: "article",
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    publishedAt: data.publishedAt,
+    type: "article"  as const,
   };
 
   console.log('Final article object:', result);  // ← Add this
@@ -108,10 +108,10 @@ function transformFeatureArticle(data: any): FeatureArticle {
     body: data.body,
     issueNumber: data.issueNumber,
     author: transformedAuthor!,
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
-    publishedAt: new Date(data.publishedAt),
-    type: "featureArticle",
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    publishedAt: data.publishedAt,
+    type: "featureArticle" as const,
   };
 }
 
@@ -125,9 +125,9 @@ function transformAuthor(strapiAuthor: StrapiAuthorData | undefined): Author | u
     name: strapiAuthor.name,
     email: strapiAuthor.email,
     bio: strapiAuthor.bio,
-    createdAt: new Date(strapiAuthor.createdAt),
-    updatedAt: new Date(strapiAuthor.updatedAt),
-    publishedAt: new Date(strapiAuthor.publishedAt),
+    createdAt: strapiAuthor.createdAt,
+    updatedAt: strapiAuthor.updatedAt,
+    publishedAt: strapiAuthor.publishedAt,
   };
 }
 

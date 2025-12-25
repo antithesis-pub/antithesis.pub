@@ -1,6 +1,6 @@
 // utils/csl-json-parser.ts
 
-import type { CitationData } from '@/components/CitationManager';
+import type { CitationData } from '@/components/citer/CitationManager';
 
 interface CSLItem {
   id: string;
