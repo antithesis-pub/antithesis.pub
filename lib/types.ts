@@ -60,7 +60,7 @@ export interface StrapiImage {
 export interface Article {
   id: number;
   documentId: string;
-  author?: Author;
+  author: Author;
   title: string;
   description: string;
   slug: string;
@@ -76,7 +76,7 @@ export interface Article {
 export interface FeatureArticle {
   title: string;
   subtitle: string;
-  author?: Author;
+  author: Author;
   slug: string;
   id: number;
   coverImage: Image;
