@@ -1,8 +1,104 @@
-// Base interface for all Strapi responses
+// lib/types.ts
+
+export interface Image {
+  id: number;
+  documentId: string;
+  name: string;
+  alternativeText?: string;
+  caption?: string;
+  width: number;
+  height: number;
+  formats?: {
+    thumbnail?: ImageFormat;
+    small?: ImageFormat;
+    medium?: ImageFormat;
+    large?: ImageFormat;
+  };
+  hash: string;
+  ext: string;
+  mime: string;
+  size: number;
+  url: string;
+  previewUrl?: string;
+  provider: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ImageFormat {
+  name: string;
+  hash: string;
+  ext: string;
+  mime: string;
+  width: number;
+  height: number;
+  size: number;
+  url: string;
+}
+
+export interface Author {
+  id: number;
+  documentId: string;
+  name: string;
+  email?: string;
+  bio?: string;
+  avatar?: Image;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+export interface Article {
+  id: number;
+  documentId: string;
+  title: string;
+  description: string;
+  slug: string;
+  body: string;
+  issueNumber: number;
+  author?: Author; // Optional because it might not be populated
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  type: 'article' | 'feature';
+}
+
+export interface FeatureArticle {
+  id: number;
+  documentId: string;
+  title: string;
+  description: string;
+  slug: string;
+  body: string;
+  issueNumber: number;
+  coverImage?: Image; // Optional because it might not exist
+  author?: Author; // Optional because it might not be populated
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  type: 'feature';
+}
+
+export interface DepartmentArticle {
+  id: number;
+  documentId: string;
+  title: string;
+  description: string;
+  slug: string;
+  body: string;
+  issueNumber: number;
+  author?: Author; // Optional because it might not be populated
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  type: 'article';
+}
+
+// Strapi API response structure
 export interface StrapiResponse<T> {
   data: T;
-  meta: {
-    pagination: {
+  meta?: {
+    pagination?: {
       page: number;
       pageSize: number;
       pageCount: number;
@@ -11,101 +107,13 @@ export interface StrapiResponse<T> {
   };
 }
 
-// Article as it comes from Strapi API
-export interface StrapiArticle {
+export interface StrapiSingleResponse<T> {
+  data: T;
+}
+
+// Helper type for Strapi entity structure
+export interface StrapiEntity<T> {
   id: number;
   documentId: string;
-  title: string;
-  description: string;
-  slug: string;
-  body: string;
-  issueNumber: number;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-}
-
-// Raw author data as it comes from Strapi API
-export interface StrapiAuthorData {
-  id: number;
-  documentId: string;
-  name: string;
-  email?: string;
-  bio?: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-}
-
-// Image data as it comes from Strapi API
-export interface StrapiImage {
-  id: number;
-  name: string;
-  alternativeText?: string;
-  caption?: string;
-  width: number;
-  height: number;
-  formats?: {
-    thumbnail?: { url: string; width: number; height: number };
-    small?: { url: string; width: number; height: number };
-    medium?: { url: string; width: number; height: number };
-    large?: { url: string; width: number; height: number };
-  };
-  url: string;
-  mime: string;
-  size: number;
-}
-
-// Flat article JSON 
-export interface Article {
-  id: number;
-  documentId: string;
-  author: Author;
-  title: string;
-  description: string;
-  slug: string;
-  body: string;
-  issueNumber: number;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  type: "article";
-}
-
-// Flat featureArticle JSON 
-export interface FeatureArticle {
-  title: string;
-  subtitle: string;
-  author: Author;
-  slug: string;
-  id: number;
-  coverImage: Image;
-  documentId: string;
-  description: string;
-  body: string;
-  issueNumber: number;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  type: "featureArticle";
-}
-
-// Flat author JSON
-export interface Author {
-  id: number;
-  documentId: string;
-  name: string;
-  email?: string;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  bio?: string;
-}
-
-// Flat image JSON
-export interface Image {
-  url: string;
-  alt: string;
-  width: number;
-  height: number;
+  attributes: T;
 }

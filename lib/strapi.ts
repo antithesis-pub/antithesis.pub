@@ -1,146 +1,272 @@
-import type { Article, FeatureArticle, Author, StrapiAuthorData, Image } from './types';
+// lib/strapi.ts
 
-const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+import {
+  Article,
+  FeatureArticle,
+  DepartmentArticle,
+  Author,
+  Image,
+  StrapiEntity,
+} from './types';
 
-// Get all articles (both types)
-export async function getArticles(): Promise<(Article | FeatureArticle)[]> {
-  const [articlesRes, featureArticlesRes] = await Promise.all([
-    fetch(`${STRAPI_URL}/api/articles?populate=*`, {
-      next: { revalidate: 60 }
-    }),
-    fetch(`${STRAPI_URL}/api/feature-articles?populate=*`, {
-      next: { revalidate: 60 }
-    })
-  ]);
-  
-  const articles = await articlesRes.json();
-  const featureArticles = await featureArticlesRes.json();
-  
-  if (!articles.data || !featureArticles.data) {
-    console.error('API returned unexpected format');
-    return [];
-  }
-  
-  const allArticles = [
-    ...articles.data.map(transformArticle),
-    ...featureArticles.data.map(transformFeatureArticle)
-  ];
-  
-  return allArticles.sort((a, b) => 
-    b.publishedAt.getTime() - a.publishedAt.getTime()
-  );
-}
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
-// Get single article by slug (checks both content types)
-export async function getArticle(slug: string): Promise<Article | FeatureArticle | null> {
-  // Try regular articles first
-  const articleRes = await fetch(
-    `${STRAPI_URL}/api/articles?filters[slug][$eq]=${slug}&populate=*`,
-    { next: { revalidate: 60 } }
-  );
-  
-  if (articleRes.ok) {
-    const data = await articleRes.json();
-    if (data.data.length > 0) {
-      return transformArticle(data.data[0]);
-    }
-  }
-  
-  // Try feature articles
-  const featureRes = await fetch(
-    `${STRAPI_URL}/api/feature-articles?filters[slug][$eq]=${slug}&populate=*`,
-    { next: { revalidate: 60 } }
-  );
-  
-  if (featureRes.ok) {
-    const data = await featureRes.json();
-    if (data.data.length > 0) {
-      return transformFeatureArticle(data.data[0]);
-    }
-  }
-  
-  return null;
-}
-
-// Transform regular article
-function transformArticle(data: any): Article {
-
-  console.log('Article author data:', data.author);
-  const authorData = data.author?.data || data.author;
-  console.log('Extracted authorData:', authorData);
-  
-  const transformedAuthor = transformAuthor(authorData);
-  console.log('Transformed author:', transformedAuthor);
-
-    const result = {
-    id: data.id,
-    documentId: data.documentId,
-    title: data.title,
-    description: data.description,
-    slug: data.slug,
-    body: data.body,
-    issueNumber: data.issueNumber,
-    author: transformedAuthor,
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
-    publishedAt: new Date(data.publishedAt),
-    type: "article",
+interface StrapiImageData {
+  id: number;
+  documentId: string;
+  attributes: {
+    name: string;
+    alternativeText?: string;
+    caption?: string;
+    width: number;
+    height: number;
+    formats?: Record<string, unknown>;
+    hash: string;
+    ext: string;
+    mime: string;
+    size: number;
+    url: string;
+    previewUrl?: string;
+    provider: string;
+    createdAt: string;
+    updatedAt: string;
   };
-
-  console.log('Final article object:', result);  // ← Add this
-  console.log('Final article.author:', result.author);  // ← And this
-
-  return result;
 }
 
-// Transform feature article
-function transformFeatureArticle(data: any): FeatureArticle {
-  const authorData = data.author?.data || data.author;
-  const transformedAuthor = transformAuthor(authorData);
+interface StrapiAuthorData {
+  id: number;
+  documentId: string;
+  attributes: {
+    name: string;
+    email?: string;
+    bio?: string;
+    avatar?: {
+      data?: StrapiImageData;
+    };
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+  };
+}
+
+interface StrapiArticleAttributes {
+  title: string;
+  description: string;
+  slug: string;
+  body: string;
+  issueNumber: number;
+  author?: {
+    data?: StrapiAuthorData;
+  };
+  coverImage?: {
+    data?: StrapiImageData;
+  };
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+// Transform Strapi image to our Image type
+function transformImage(strapiImage?: StrapiImageData): Image | undefined {
+  if (!strapiImage) return undefined;
+
   return {
-    id: data.id,
-    documentId: data.documentId,
-    title: data.title,
-    subtitle: data.subtitle,
-    description: data.description,
-    coverImage: transformImage(data.coverImage),
-    slug: data.slug,
-    body: data.body,
-    issueNumber: data.issueNumber,
-    author: transformedAuthor!,
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
-    publishedAt: new Date(data.publishedAt),
-    type: "featureArticle",
+    id: strapiImage.id,
+    documentId: strapiImage.documentId,
+    name: strapiImage.attributes.name,
+    alternativeText: strapiImage.attributes.alternativeText,
+    caption: strapiImage.attributes.caption,
+    width: strapiImage.attributes.width,
+    height: strapiImage.attributes.height,
+    formats: strapiImage.attributes.formats as Image['formats'],
+    hash: strapiImage.attributes.hash,
+    ext: strapiImage.attributes.ext,
+    mime: strapiImage.attributes.mime,
+    size: strapiImage.attributes.size,
+    url: strapiImage.attributes.url,
+    previewUrl: strapiImage.attributes.previewUrl,
+    provider: strapiImage.attributes.provider,
+    createdAt: strapiImage.attributes.createdAt,
+    updatedAt: strapiImage.attributes.updatedAt,
   };
 }
 
-// Helper to transform Strapi author response
-function transformAuthor(strapiAuthor: StrapiAuthorData | undefined): Author | undefined {
+// Transform Strapi author to our Author type
+function transformAuthor(strapiAuthor?: StrapiAuthorData): Author | undefined {
   if (!strapiAuthor) return undefined;
-  
+
   return {
     id: strapiAuthor.id,
     documentId: strapiAuthor.documentId,
-    name: strapiAuthor.name,
-    email: strapiAuthor.email,
-    bio: strapiAuthor.bio,
-    createdAt: new Date(strapiAuthor.createdAt),
-    updatedAt: new Date(strapiAuthor.updatedAt),
-    publishedAt: new Date(strapiAuthor.publishedAt),
+    name: strapiAuthor.attributes.name,
+    email: strapiAuthor.attributes.email,
+    bio: strapiAuthor.attributes.bio,
+    avatar: transformImage(strapiAuthor.attributes.avatar?.data),
+    createdAt: strapiAuthor.attributes.createdAt,
+    updatedAt: strapiAuthor.attributes.updatedAt,
+    publishedAt: strapiAuthor.attributes.publishedAt,
   };
 }
 
-function transformImage(strapiImage: any): Image | undefined {
-  if (!strapiImage) return undefined;
-  
-  // Handle both formats: {data: {attributes: {...}}} and direct object
-  const img = strapiImage.data?.attributes || strapiImage.data || strapiImage;
+// Transform Strapi article to our Article type
+function transformArticle(strapiArticle: StrapiEntity<StrapiArticleAttributes>): Article {
+  const attrs = strapiArticle.attributes;
   
   return {
-    url: `${STRAPI_URL}${img.url}`,
-    alt: img.alternativeText || img.name || '',
-    width: img.width,
-    height: img.height,
+    id: strapiArticle.id,
+    documentId: strapiArticle.documentId,
+    title: attrs.title,
+    description: attrs.description,
+    slug: attrs.slug,
+    body: attrs.body,
+    issueNumber: attrs.issueNumber,
+    author: transformAuthor(attrs.author?.data),
+    createdAt: attrs.createdAt,
+    updatedAt: attrs.updatedAt,
+    publishedAt: attrs.publishedAt,
+    type: 'article',
   };
+}
+
+// Transform Strapi feature article to our FeatureArticle type
+function transformFeatureArticle(strapiArticle: StrapiEntity<StrapiArticleAttributes>): FeatureArticle {
+  const attrs = strapiArticle.attributes;
+  
+  return {
+    id: strapiArticle.id,
+    documentId: strapiArticle.documentId,
+    title: attrs.title,
+    description: attrs.description,
+    slug: attrs.slug,
+    body: attrs.body,
+    issueNumber: attrs.issueNumber,
+    coverImage: transformImage(attrs.coverImage?.data),
+    author: transformAuthor(attrs.author?.data),
+    createdAt: attrs.createdAt,
+    updatedAt: attrs.updatedAt,
+    publishedAt: attrs.publishedAt,
+    type: 'feature',
+  };
+}
+
+// Transform Strapi department article to our DepartmentArticle type
+function transformDepartmentArticle(strapiArticle: StrapiEntity<StrapiArticleAttributes>): DepartmentArticle {
+  const attrs = strapiArticle.attributes;
+  
+  return {
+    id: strapiArticle.id,
+    documentId: strapiArticle.documentId,
+    title: attrs.title,
+    description: attrs.description,
+    slug: attrs.slug,
+    body: attrs.body,
+    issueNumber: attrs.issueNumber,
+    author: transformAuthor(attrs.author?.data),
+    createdAt: attrs.createdAt,
+    updatedAt: attrs.updatedAt,
+    publishedAt: attrs.publishedAt,
+    type: 'article',
+  };
+}
+
+// Fetch all articles
+export async function getArticles(): Promise<Article[]> {
+  const res = await fetch(`${STRAPI_URL}/api/articles?populate=*`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch articles');
+  }
+
+  const json = await res.json();
+  return json.data.map(transformArticle);
+}
+
+// Fetch all feature articles
+export async function getFeatureArticles(): Promise<FeatureArticle[]> {
+  const res = await fetch(`${STRAPI_URL}/api/feature-articles?populate=*`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch feature articles');
+  }
+
+  const json = await res.json();
+  return json.data.map(transformFeatureArticle);
+}
+
+// Fetch all department articles
+export async function getDepartmentArticles(): Promise<DepartmentArticle[]> {
+  const res = await fetch(`${STRAPI_URL}/api/department-articles?populate=*`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch department articles');
+  }
+
+  const json = await res.json();
+  return json.data.map(transformDepartmentArticle);
+}
+
+// Fetch a single article by slug
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  const res = await fetch(
+    `${STRAPI_URL}/api/articles?filters[slug][$eq]=${slug}&populate=*`,
+    { next: { revalidate: 60 } }
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch article');
+  }
+
+  const json = await res.json();
+  
+  if (!json.data || json.data.length === 0) {
+    return null;
+  }
+
+  return transformArticle(json.data[0]);
+}
+
+// Fetch a single feature article by slug
+export async function getFeatureArticleBySlug(slug: string): Promise<FeatureArticle | null> {
+  const res = await fetch(
+    `${STRAPI_URL}/api/feature-articles?filters[slug][$eq]=${slug}&populate=*`,
+    { next: { revalidate: 60 } }
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch feature article');
+  }
+
+  const json = await res.json();
+  
+  if (!json.data || json.data.length === 0) {
+    return null;
+  }
+
+  return transformFeatureArticle(json.data[0]);
+}
+
+// Fetch a single department article by slug
+export async function getDepartmentArticleBySlug(slug: string): Promise<DepartmentArticle | null> {
+  const res = await fetch(
+    `${STRAPI_URL}/api/department-articles?filters[slug][$eq]=${slug}&populate=*`,
+    { next: { revalidate: 60 } }
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch department article');
+  }
+
+  const json = await res.json();
+  
+  if (!json.data || json.data.length === 0) {
+    return null;
+  }
+
+  return transformDepartmentArticle(json.data[0]);
 }
