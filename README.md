@@ -2,6 +2,8 @@
 
 This website will require following pages/sections (in no particular order):
 
+Vercel 
+
 - Article Pages
     - References support
     - Progress bar?
