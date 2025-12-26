@@ -1,6 +1,6 @@
 import type { Article, FeatureArticle, Author, StrapiAuthorData, Image } from './types';
 
-const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
 // Get all articles (both types)
 export async function getArticles(): Promise<(Article | FeatureArticle)[]> {
